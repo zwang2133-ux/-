@@ -299,7 +299,29 @@
             fill: #121115;
         }
 
-        /* 表單彈窗 / 頁面配置 (新增與編輯共用) */
+        /* 通用子頁面樣式 (日曆、洞察、選單等) */
+        .sub-page {
+            display: none;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .sub-page-header {
+            font-size: 22px;
+            color: #f2ede4;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .sub-page-desc {
+            font-size: 12px;
+            color: #8c8278;
+            margin-bottom: 20px;
+        }
+
+        /* 表單彈窗 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -411,19 +433,6 @@
             flex: 1;
         }
 
-        .history-header {
-            font-size: 22px;
-            color: #f2ede4;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-
-        .history-stats-desc {
-            font-size: 12px;
-            color: #8c8278;
-            margin-bottom: 20px;
-        }
-
         .search-box {
             width: 100%;
             background: #1c1a21;
@@ -475,10 +484,10 @@
 </head>
 <body>
 
-    <!-- 主頁面容器 -->
-    <div id="mainView" class="container">
+    <!-- 主頁面 (概覽) -->
+    <div id="mainView" class="container view-section">
         <div class="header-top">
-            <button class="menu-btn" onclick="alert('選單功能')">☰</button>
+            <button class="menu-btn" onclick="switchView('menu')">☰</button>
             <div class="date-display" id="currentDateHeader">2026年8月13日</div>
         </div>
 
@@ -532,26 +541,65 @@
                 <a class="view-all-link" onclick="switchView('history')">查看全部 &gt;</a>
             </div>
             <div id="recentListContainer">
-                <!-- 動態載入近期一筆 -->
+                <!-- 動態載入 -->
             </div>
         </div>
     </div>
 
     <!-- 全部痕跡 / 歷史頁面 -->
-    <div id="historyView" class="history-page">
+    <div id="historyView" class="sub-page view-section">
         <div class="header-top">
             <button class="menu-btn" onclick="switchView('main')">←</button>
             <div class="date-display" id="historyDateHeader">2026年8月13日</div>
         </div>
-        <div class="history-header">全部痕跡</div>
-        <div class="history-stats-desc" id="historyStatsDesc">共 1 次 · 累計 15 分鐘 · 平均 15 分鐘</div>
+        <div class="sub-page-header">全部痕跡</div>
+        <div class="sub-page-desc" id="historyStatsDesc">共 1 次 · 累計 15 分鐘 · 平均 15 分鐘</div>
 
         <input type="text" class="search-box" id="searchInput" placeholder="搜尋形式、道具或備註..." oninput="renderRecords()">
 
         <div style="font-size: 13px; color: #8c8278; margin-bottom: 12px;" id="recordCountLabel">記錄列表 共 1 條</div>
 
-        <div id="fullRecordList">
-            <!-- 歷史列表動態渲染 -->
+        <div id="fullRecordList"></div>
+    </div>
+
+    <!-- 日曆頁面 -->
+    <div id="calendarView" class="sub-page view-section">
+        <div class="header-top">
+            <button class="menu-btn" onclick="switchView('main')">←</button>
+            <div class="date-display">2026年8月</div>
+        </div>
+        <div class="sub-page-header">日曆檢視</div>
+        <div class="sub-page-desc">按日檢視您的節律分佈與軌跡</div>
+        <div class="section-card" style="text-align: center; padding: 40px 20px; color: #8c8278;">
+            日曆功能建構中，將顯示每日頻率分佈
+        </div>
+    </div>
+
+    <!-- 洞察頁面 -->
+    <div id="insightView" class="sub-page view-section">
+        <div class="header-top">
+            <button class="menu-btn" onclick="switchView('main')">←</button>
+            <div class="date-display">數據洞察</div>
+        </div>
+        <div class="sub-page-header">節律洞察</div>
+        <div class="sub-page-desc">長期習慣與形式偏好分析</div>
+        <div class="section-card" style="text-align: center; padding: 40px 20px; color: #8c8278;">
+            洞察統計圖表與趨勢分析
+        </div>
+    </div>
+
+    <!-- 側邊選單頁面 -->
+    <div id="menuView" class="sub-page view-section">
+        <div class="header-top">
+            <button class="menu-btn" onclick="switchView('main')">←</button>
+            <div class="date-display">設定與選單</div>
+        </div>
+        <div class="sub-page-header">選單</div>
+        <div class="sub-page-desc">王字豪的個人化工具</div>
+        <div class="section-card">
+            <div style="padding: 10px 0; border-bottom: 1px solid #2a2732; color: #f2ede4; cursor: pointer;" onclick="alert('匯出資料功能')">匯出紀錄備份</div>
+            <div style="padding: 10px 0; border-bottom: 1px solid #2a2732; color: #f2ede4; cursor: pointer;" onclick="alert('主題風格設定')">介面風格設定</div>
+            <div style="padding: 10px 0; color: #d97777; cursor: pointer;" onclick="if(confirm('清空所有資料？')) { records = []; updateDashboard(); switchView('main'); }">清空所有紀錄</div>
         </div>
     </div>
 
@@ -562,11 +610,11 @@
 
     <!-- 底部導覽列 -->
     <nav class="nav-bar">
-        <button class="nav-item active" onclick="switchView('main')">
+        <button class="nav-item active" id="navMain" onclick="switchView('main')">
             <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
             概覽
         </button>
-        <button class="nav-item" onclick="alert('日曆頁面')">
+        <button class="nav-item" id="navCalendar" onclick="switchView('calendar')">
             <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
             日曆
         </button>
@@ -574,17 +622,17 @@
             <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
             記錄
         </button>
-        <button class="nav-item" onclick="switchView('history')">
+        <button class="nav-item" id="navHistory" onclick="switchView('history')">
             <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
             歷史
         </button>
-        <button class="nav-item" onclick="alert('洞察頁面')">
+        <button class="nav-item" id="navInsight" onclick="switchView('insight')">
             <svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6 3.01 3 5-5H21V12h-3.51l-5-5-3.01 3-6-6L2 5.51l1.5 1.298z"/></svg>
             洞察
         </button>
     </nav>
 
-    <!-- 新增 / 編輯共用彈窗介面 (對應第三張圖風格) -->
+    <!-- 新增 / 編輯共用彈窗介面 -->
     <div id="recordModal" class="modal-overlay">
         <div class="modal-container">
             <div class="modal-header">
@@ -604,7 +652,7 @@
                 <div class="duration-tags" style="margin-bottom: 8px;">
                     <button type="button" class="tag-btn" onclick="setDuration(5)">5分</button>
                     <button type="button" class="tag-btn" onclick="setDuration(10)">10分</button>
-                    <button type="button" class="tag-btn.active tag-btn" onclick="setDuration(15)">15分</button>
+                    <button type="button" class="tag-btn active" onclick="setDuration(15)">15分</button>
                     <button type="button" class="tag-btn" onclick="setDuration(20)">20分</button>
                     <button type="button" class="tag-btn" onclick="setDuration(30)">30分</button>
                     <button type="button" class="tag-btn" onclick="setDuration(45)">45分</button>
@@ -616,20 +664,20 @@
             <div class="form-group">
                 <label class="form-label">刺激形式</label>
                 <div class="tag-container" id="formForms">
-                    <button type="button" class="tag-btn active" onclick="toggleTag(this, 'form')">影片</button>
-                    <button type="button" class="tag-btn" onclick="toggleTag(this, 'form')">圖片</button>
-                    <button type="button" class="tag-btn" onclick="toggleTag(this, 'form')">文字</button>
-                    <button type="button" class="tag-btn" onclick="toggleTag(this, 'form')">音頻</button>
-                    <button type="button" class="tag-btn" onclick="toggleTag(this, 'form')">想像</button>
+                    <button type="button" class="tag-btn active" onclick="toggleTag(this)">影片</button>
+                    <button type="button" class="tag-btn" onclick="toggleTag(this)">圖片</button>
+                    <button type="button" class="tag-btn" onclick="toggleTag(this)">文字</button>
+                    <button type="button" class="tag-btn" onclick="toggleTag(this)">音頻</button>
+                    <button type="button" class="tag-btn" onclick="toggleTag(this)">想像</button>
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="form-label">輔助道具</label>
                 <div class="tag-container" id="formTools">
-                    <button type="button" class="tag-btn active" onclick="toggleTag(this, 'tool')">手</button>
-                    <button type="button" class="tag-btn" onclick="toggleTag(this, 'tool')">玩具</button>
-                    <button type="button" class="tag-btn" onclick="toggleTag(this, 'tool')">其他</button>
+                    <button type="button" class="tag-btn active" onclick="toggleTag(this)">手</button>
+                    <button type="button" class="tag-btn" onclick="toggleTag(this)">玩具</button>
+                    <button type="button" class="tag-btn" onclick="toggleTag(this)">其他</button>
                 </div>
             </div>
 
@@ -643,7 +691,6 @@
     </div>
 
     <script>
-        // 初始測試資料 (對應截圖中的預設紀錄)
         let records = [
             {
                 time: "2026/8/13 19:28",
@@ -654,19 +701,33 @@
             }
         ];
 
-        // 頁面切換控制
+        // 頁面切換控制 (支援 main, history, calendar, insight, menu)
         function switchView(viewName) {
-            const mainView = document.getElementById('mainView');
-            const historyView = document.getElementById('historyView');
+            const views = ['mainView', 'historyView', 'calendarView', 'insightView', 'menuView'];
+            views.forEach(v => {
+                document.getElementById(v).style.display = 'none';
+            });
+
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
             if (viewName === 'history') {
-                mainView.classList.add('hidden');
-                historyView.style.display = 'block';
+                document.getElementById('historyView').style.display = 'block';
+                document.getElementById('navHistory').classList.add('active');
                 renderRecords();
+            } else if (viewName === 'calendar') {
+                document.getElementById('calendarView').style.display = 'block';
+                document.getElementById('navCalendar').classList.add('active');
+            } else if (viewName === 'insight') {
+                document.getElementById('insightView').style.display = 'block';
+                document.getElementById('navInsight').classList.add('active');
+            } else if (viewName === 'menu') {
+                document.getElementById('menuView').style.display = 'block';
             } else {
-                historyView.style.display = 'none';
-                mainView.classList.remove('hidden');
+                document.getElementById('mainView').style.display = 'block';
+                document.getElementById('navMain').classList.add('active');
                 updateDashboard();
             }
+            window.scrollTo(0, 0);
         }
 
         // 開啟新增視窗
@@ -674,14 +735,12 @@
             document.getElementById('modalTitle').innerText = "新增一次";
             document.getElementById('editIndex').value = "-1";
             
-            // 取得目前系統時間
             const now = new Date();
             const timeStr = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
             document.getElementById('recordTime').value = timeStr;
             document.getElementById('recordDurationInput').value = "15";
             document.getElementById('recordNote').value = "";
             
-            // 重設標籤預設狀態
             resetTags();
             document.getElementById('recordModal').style.display = 'flex';
         }
@@ -696,7 +755,6 @@
             document.getElementById('recordDurationInput').value = rec.duration;
             document.getElementById('recordNote').value = rec.note || "";
 
-            // 還原標籤狀態
             setTagsState('formForms', rec.forms);
             setTagsState('formTools', rec.tools);
 
@@ -722,7 +780,7 @@
             });
         }
 
-        function toggleTag(btn, type) {
+        function toggleTag(btn) {
             btn.classList.toggle('active');
         }
 
@@ -767,9 +825,9 @@
             const recordData = { time, duration, forms, tools, note };
 
             if (editIndex === -1) {
-                records.unshift(recordData); // 新增置頂
+                records.unshift(recordData);
             } else {
-                records[editIndex] = recordData; // 修改指定項目
+                records[editIndex] = recordData;
             }
 
             closeModal();
@@ -813,7 +871,7 @@
             `;
         }
 
-        // 渲染全部痕跡列表 (支援搜尋、刪除、修改)
+        // 渲染全部痕跡列表
         function renderRecords() {
             const keyword = document.getElementById('searchInput').value.toLowerCase();
             const listContainer = document.getElementById('fullRecordList');
@@ -858,8 +916,12 @@
             listContainer.innerHTML = html;
         }
 
-        // 初始化載入
+        // 初始化
         updateDashboard();
+        document.getElementById('historyView').style.display = 'none';
+        document.getElementById('calendarView').style.display = 'none';
+        document.getElementById('insightView').style.display = 'none';
+        document.getElementById('menuView').style.display = 'none';
     </script>
 </body>
 </html>
