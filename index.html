@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>看見節律</title>
+    <!-- 引入高質感襯線與圓體字體，完美搭配圖片風格 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121115;
+            --card-bg: #1A1820;
+            --card-border: #2A2635;
+            --text-main: #F4EBE1;
+            --text-sub: #9E95A8;
+            --accent-color: #E8A87C;
+            --accent-glow: rgba(232, 168, 124, 0.2);
+            --font-serif: 'Noto Serif TC', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-serif); /* 全站預設套用精緻的襯線風格字體 */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            padding-bottom: 90px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 頂部導覽列 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .menu-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* 主標題區域 */
+        .hero-section {
+            margin-top: 10px;
+        }
+
+        .date-label {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .main-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .highlight-text {
+            color: var(--accent-color);
+        }
+
+        /* 數據概覽卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90px;
+        }
+
+        .stat-title {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-main);
+            font-family: var(--font-sans);
+        }
+
+        .stat-value.number {
+            font-size: 1.6rem;
+            color: var(--accent-color);
+        }
+
+        /* 七日節律區塊 */
+        .rhythm-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .rhythm-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .rhythm-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .rhythm-count {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            font-family: var(--font-sans);
+        }
+
+        .days-row {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        .day-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .day-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #24212D;
+            border: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            font-family: var(--font-sans);
+        }
+
+        .day-name {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+        }
+
+        /* 記錄按鈕卡片 */
+        .action-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .action-card:hover {
+            border-color: var(--accent-color);
+        }
+
+        .action-info h3 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .action-info p {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+        }
+
+        .action-icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: #121115;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* 近期片刻區塊 */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .section-action {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .empty-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-align: center;
+            color: var(--text-sub);
+        }
+
+        .empty-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #24212D;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--accent-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .empty-text {
+            font-size: 0.9rem;
+        }
+
+        /* 浮動播放按鈕 */
+        .floating-play {
+            position: fixed;
+            bottom: 95px;
+            right: 25px;
+            width: 56px;
+            height: 56px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            cursor: pointer;
+            color: #121115;
+            font-size: 1.4rem;
+        }
+
+        /* 底部導覽列 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(18, 17, 21, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 頂部按鈕 -->
+        <div class="header">
+            <div class="menu-btn">≡</div>
+        </div>
+
+        <!-- 標題與問候語 -->
+        <div class="hero-section">
+            <div class="date-label">2026年8月13日</div>
+            <div class="main-title">
+                晚上，<br>
+                <span class="highlight-text">夜色溫柔，與自己相處</span>
+            </div>
+        </div>
+
+        <!-- 數據指標 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-title">次數</span>
+                <span class="stat-value number">0<span style="font-size: 0.9rem; font-weight: normal;">次</span></span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-title">總時長</span>
+                <span class="stat-value">剛剛</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-title">距上次</span>
+                <span class="stat-value">—</span>
+            </div>
+        </div>
+
+        <!-- 七日節律 -->
+        <div class="rhythm-card">
+            <div class="rhythm-header">
+                <span class="rhythm-title">七日之間</span>
+                <span class="rhythm-count">本周次數 0</span>
+            </div>
+            <div class="days-row">
+                <div class="day-item">
+                    <div class="day-dot">0</div>
+                    <span class="day-name">五</span>
+                </div>
+                <div class="day-item">
+                    <div class="day-dot">0</div>
+                    <span class="day-name">六</span>
+                </div>
+                <div class="day-item">
+                    <div class="day-dot">0</div>
+                    <span class="day-name">日</span>
+                </div>
+                <div class="day-item">
+                    <div class="day-dot">0</div>
+                    <span class="day-name">一</span>
+                </div>
+                <div class="day-item">
+                    <div class="day-dot">0</div>
+                    <span class="day-name">二</span>
+                </div>
+                <div class="day-item">
+                    <div class="day-dot">0</div>
+                    <span class="day-name">三</span>
+                </div>
+                <div class="day-item">
+                    <div class="day-dot" style="border-color: var(--accent-color); color: var(--accent-color);">0</div>
+                    <span class="day-name" style="color: var(--accent-color);">四</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 記錄按鈕卡片 -->
+        <div class="action-card">
+            <div class="action-info">
+                <h3>記下這一次</h3>
+                <p>幾秒就好，時間、時長、材料</p>
+            </div>
+            <div class="action-icon-btn">+</div>
+        </div>
+
+        <!-- 近期片刻 -->
+        <div class="section-header">
+            <span class="section-title">最近的片刻</span>
+            <a href="#" class="section-action">查看全部 ↗</a>
+        </div>
+
+        <div class="empty-card">
+            <div class="empty-icon">+</div>
+            <span class="empty-text">還沒有記錄，從一次開始。</span>
+        </div>
+    </div>
+
+    <!-- 浮動播放按鈕 -->
+    <div class="floating-play">▶</div>
+
+    <!-- 底部導覽列 -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <span>🔲</span>
+            <span>概覽</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span>📅</span>
+            <span>日歷</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span>✍️</span>
+            <span>記錄</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span>🕒</span>
+            <span>歷史</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span>📈</span>
+            <span>洞察</span>
+        </a>
+    </div>
+
+</body>
+</html>
